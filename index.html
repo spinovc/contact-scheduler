@@ -146,7 +146,7 @@
 const HOURS=[5,6,7,8,9,10,11,12,13,14,15,16];
 const DAY_START=5, DAY_END=17, LATEST_END=17.25, SPAN=DAY_END-DAY_START;
 const SHAPE=[0.30,0.55,0.80,0.98,1.0,1.0,0.92,0.74,0.80,0.66,0.46,0.30];
-const LUNCH_WINDOW=5;
+const LUNCH_MIN=3, LUNCH_MAX=5;
 const SKEY='accuroScenarios';
 const fmtH=h=>{const ap=h>=12?'p':'a';let x=Math.floor(h)%12;if(x===0)x=12;return x+ap;};
 const fmtHM=h=>{let hh=Math.floor(h);const m=Math.round((h-hh)*60);const ap=hh>=12?'p':'a';let d=hh%12;if(d===0)d=12;return d+(m?(':'+String(m).padStart(2,'0')):'')+ap;};
@@ -184,7 +184,10 @@ function sampleState(){
 
 function skillFactor(agent,p){ return Math.max(0.2, 1 - (p.skillPenalty||0)*(agent.skills.length-1)); }
 function workedBuckets(a){ const out=[]; HOURS.forEach(h=>{ if(h>=Math.floor(a.start) && h<a.end) out.push(h); }); return out; }
-function lunchCandidates(a){ const wb=workedBuckets(a); if(!wb.length) return []; let c=wb.filter(h=>h<a.start+LUNCH_WINDOW); if(!c.length)c=wb.slice(); const interior=c.filter(h=>h!==wb[0]&&h!==wb[wb.length-1]); return interior.length?interior:c; }
+function lunchCandidates(a){ const wb=workedBuckets(a); if(!wb.length) return [];
+  let c=wb.filter(h=>(h-a.start)>=LUNCH_MIN && (h-a.start)<=LUNCH_MAX);
+  if(!c.length) c=wb.filter(h=>h!==wb[0]&&h!==wb[wb.length-1]);
+  if(!c.length) c=wb.slice(); return c; }
 function lunchBucket(a){ const c=lunchCandidates(a); if(!c.length){ const wb=workedBuckets(a); return wb.length?wb[0]:Math.floor(a.start); } let lb=(a.lunch!=null)?a.lunch:c[Math.floor(c.length/2)]; return clamp(lb, c[0], c[c.length-1]); }
 function placeLunch(a){ const c=lunchCandidates(a); a.lunch = c.length? c[Math.floor(c.length/2)] : (workedBuckets(a)[0] ?? Math.floor(a.start)); }
 function shiftLabel(a){ return fmtHM(a.start)+'-'+fmtHM(a.end); }
@@ -302,7 +305,7 @@ document.addEventListener('mouseup',()=>{ if(!drag)return; const a=state.agents[
   placeLunch(a); drag=null; refresh(); });
 function renderTimeline(){
   const el=document.getElementById('tab-timeline');
-  let html=`<div class="toolbar"><button class="btn coral" id="optimize">⚡ Optimize schedule</button><button class="btn teal" id="autolunch">Auto-stagger lunches</button><span class="muted small">Drag a coloured bar to slide the shift; drag an empty cell to set new hours. Hatched "Lunch" block = lunch (within 5h of start).</span></div>`;
+  let html=`<div class="toolbar"><button class="btn coral" id="optimize">⚡ Optimize schedule</button><button class="btn teal" id="autolunch">Auto-stagger lunches</button><span class="muted small">Drag a coloured bar to slide the shift; drag an empty cell to set new hours. Hatched "Lunch" block = lunch (3-5h into the shift).</span></div>`;
   html+=`<div style="overflow-x:auto"><div class="bgrid"><div class="bghead"></div>${HOURS.map(h=>`<div class="bghead">${fmtH(h)}</div>`).join('')}`;
   state.queues.forEach(q=>{
     const list=state.agents.map((a,i)=>({a,i})).filter(x=>x.a.skills[0]===q.id);
@@ -340,7 +343,7 @@ function autoLunches(){
     cand.forEach(h=>{ a.lunch=h; const g=computeAll(state).totDef; if(g<bg){bg=g;best=h;} });
     a.lunch=best;
   });
-  refresh(); flash('Lunches staggered for best coverage (within 5h of each shift)');
+  refresh(); flash('Lunches staggered for best coverage (3-5h into each shift)');
 }
 
 function renderShifts(){
@@ -587,7 +590,7 @@ function renderDemand(){
     <h3 style="font-size:14px;margin:18px 0 8px">Capacity assumptions <span class="muted small">(how many calls we HANDLE)</span></h3><div class="toolbar">
     <div class="field"><label>Calls / agent / day</label><input type="number" id="p_cpd" value="${P.callsPerDay}"></div>
     <div class="field"><label>Penalty / extra focus</label><input type="number" step="0.05" id="p_sp" value="${P.skillPenalty}"></div></div>
-    <div class="note">Each agent handles <b>${P.callsPerDay} calls/day</b> at one focus; every extra focus multiplies capacity by (1 - ${P.skillPenalty}). Each agent takes one lunch (30 or 60 min, per agent, within 5h of shift start), shown on the Timeline. <b>Offered</b> = calls in, <b>Handled</b> = answered, <b>Gap</b> = offered - handled, <b>Idle</b> = capacity with no call to take.</div>
+    <div class="note">Each agent handles <b>${P.callsPerDay} calls/day</b> at one focus; every extra focus multiplies capacity by (1 - ${P.skillPenalty}). Each agent takes one lunch (30 or 60 min, per agent, 3-5 hours into the shift), shown on the Timeline. <b>Offered</b> = calls in, <b>Handled</b> = answered, <b>Gap</b> = offered - handled, <b>Idle</b> = capacity with no call to take.</div>
     <h3 style="font-size:14px;margin:18px 0 8px">Call volume by hour <span class="muted small">(fine-tune the shape; or edit the bold /day to rescale)</span></h3>
     <div class="toolbar"><button class="btn" id="csvUp2">Upload CSV</button><button class="btn" id="csvDown2">Download CSV</button></div>
     <div style="overflow-x:auto"><table class="grid-dem"><thead><tr><th>Queue</th>${HOURS.map(h=>`<th>${fmtH(h)}</th>`).join('')}<th>/day</th></tr></thead><tbody>`;
