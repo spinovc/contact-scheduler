@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Capacity Studio — inbound coverage simulator</title>
+<style>
+  :root{
+    --bg:#0d1524; --panel:#15203a; --panel2:#1c2a47; --line:#28385c; --line2:#34466e;
+    --txt:#e8eef7; --muted:#90a3c4; --faint:#5d7099;
+    --teal:#18a5be; --coral:#e8512d; --navy:#1b2a4a;
+    --good:#3fae74; --goodbg:#10331f; --bad:#e8512d; --badbg:#3a1814; --warn:#e0a82e;
+    --tech:#18a5be; --billing:#e8512d; --labs:#3fae74; --medeo:#5b8def; --config:#e0a82e;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font:13px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  h1,h2,h3{font-weight:600;margin:0}
+  button{font:inherit;cursor:pointer}
+  .app{display:flex;min-height:100vh}
+  .side{width:288px;flex:none;background:var(--panel);border-right:1px solid var(--line);padding:14px;overflow-y:auto;max-height:100vh}
+  .logo{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+  .logo .mark{width:14px;height:14px;background:var(--coral);border-radius:3px;transform:rotate(45deg)}
+  .logo h1{font-size:16px;letter-spacing:.3px}
+  .logo small{display:block;color:var(--faint);font-size:10.5px;letter-spacing:.5px;margin-left:22px;margin-top:-2px}
+  .sec{font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--faint);margin:16px 0 8px}
+  .upload{border:1px dashed var(--line2);border-radius:8px;padding:9px;text-align:center;color:var(--muted);font-size:12px;cursor:pointer}
+  .upload:hover{border-color:var(--teal);color:var(--txt)}
+  .agrow{padding:7px 0;border-bottom:1px solid var(--line)}
+  .agrow .top{display:flex;justify-content:space-between;align-items:center;gap:6px}
+  .agrow .nm{font-size:12px;font-weight:600}
+  .agrow .sk{margin-top:4px;display:flex;flex-wrap:wrap;gap:3px}
+  .chip{font-size:10px;padding:1px 6px;border-radius:10px;border:1px solid var(--line2);cursor:pointer;user-select:none;opacity:.38}
+  .chip.on{opacity:1}
+  select{background:var(--panel2);border:1px solid var(--line2);color:var(--txt);border-radius:6px;padding:3px 5px;font:inherit;font-size:11px;max-width:120px}
+  .mini{font-size:10.5px;color:var(--faint)}
+  .main{flex:1;min-width:0;display:flex;flex-direction:column;max-height:100vh;overflow:hidden}
+  .kpibar{display:flex;gap:1px;background:var(--line);border-bottom:1px solid var(--line)}
+  .kpi{flex:1;background:var(--panel);padding:9px 12px}
+  .kpi.hl{background:var(--panel2)}
+  .kpi .lab{font-size:9.5px;letter-spacing:.6px;text-transform:uppercase;color:var(--faint)}
+  .kpi .val{font-size:19px;font-weight:700;margin-top:2px;line-height:1.15}
+  .kpi .sub{font-size:10px;color:var(--muted)}
+  .tabs{display:flex;gap:2px;padding:8px 14px 0;background:var(--bg)}
+  .tab{background:none;border:none;color:var(--muted);padding:7px 13px;font-size:12.5px;border-radius:7px 7px 0 0}
+  .tab.active{color:var(--txt);background:var(--panel)}
+  .content{flex:1;overflow:auto;padding:14px;background:var(--panel);margin:0 14px 14px;border-radius:0 8px 8px 8px}
+  .hide{display:none}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+  .btn{background:var(--panel2);border:1px solid var(--line2);color:var(--txt);padding:6px 12px;border-radius:7px;font-size:12px}
+  .btn:hover{border-color:var(--teal)}
+  .btn.primary{background:var(--teal);border-color:var(--teal);color:#04222a;font-weight:600}
+  .btn.coral{background:var(--coral);border-color:var(--coral);color:#2a0c04;font-weight:600}
+  .tl-head,.tl-row{display:flex;align-items:center}
+  .tl-lab{width:140px;flex:none;font-size:11.5px;padding-right:8px}
+  .tl-track{position:relative;flex:1;height:18px}
+  .tl-axis{position:relative;flex:1;height:18px;border-bottom:1px solid var(--line2)}
+  .tl-axis span{position:absolute;font-size:10px;color:var(--faint);transform:translateX(-50%)}
+  .gtick{position:absolute;top:0;bottom:0;width:1px;background:var(--line)}
+  .bar{position:absolute;top:3px;height:12px;border-radius:3px;font-size:9px;color:#06121c;display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap}
+  .bar .lunch{position:absolute;top:0;bottom:0;background:rgba(13,21,36,.55)}
+  .qgroup{font-size:11px;font-weight:600;margin:10px 0 3px;letter-spacing:.3px}
+  table.hm{border-collapse:separate;border-spacing:3px;width:100%}
+  table.hm th{font-size:10.5px;color:var(--muted);font-weight:500;padding:3px;text-align:center}
+  table.hm td.qn{text-align:left;font-weight:600;white-space:nowrap;padding-right:6px;font-size:12px}
+  .cell{border-radius:5px;text-align:center;padding:7px 3px;font-size:11.5px;font-variant-numeric:tabular-nums;min-width:46px}
+  .cell small{display:block;font-size:9px;opacity:.7}
+  .legend{display:flex;gap:14px;align-items:center;margin-top:12px;font-size:11.5px;color:var(--muted);flex-wrap:wrap}
+  .sw{display:inline-block;width:13px;height:13px;border-radius:3px;margin-right:5px;vertical-align:middle}
+  .qdot{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;vertical-align:middle}
+  .charts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .chart{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:10px 12px}
+  .chart .ct{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+  .chart .ct .nm{font-size:12.5px;font-weight:600}
+  .chart .ct .st{font-size:11px;color:var(--muted)}
+  .tag{font-size:10px;padding:1px 7px;border-radius:10px;margin-left:6px}
+  .board{display:grid;gap:6px}
+  .bcell{background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:5px;min-height:40px;display:flex;flex-wrap:wrap;gap:3px;align-content:flex-start}
+  .agc{font-size:10px;padding:1px 6px;border-radius:5px;border:1px solid}
+  .bhead{font-size:11px;color:var(--muted);text-align:center;padding:3px}
+  .rec{display:flex;align-items:center;gap:11px;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:10px 12px;margin-bottom:8px}
+  .rec .ic{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex:none}
+  .rec .bd{flex:1}.rec .imp{color:var(--good);font-size:12px;font-weight:600;white-space:nowrap}
+  .pill{font-size:10px;padding:1px 7px;border-radius:10px;border:1px solid var(--line2);color:var(--muted);margin-left:6px}
+  .muted{color:var(--muted)}.small{font-size:11.5px}
+  .grid-dem{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+  .grid-dem th,.grid-dem td{border:1px solid var(--line);padding:3px 4px;text-align:center;font-size:11.5px}
+  .grid-dem th{color:var(--muted);font-weight:500}
+  .grid-dem input{width:42px;text-align:center;border:none;background:transparent;color:var(--txt);font-size:11.5px}
+  .grid-dem input:focus{background:var(--panel);outline:1px solid var(--teal)}
+  .field{display:flex;flex-direction:column;gap:3px}.field label{font-size:10.5px;color:var(--muted)}
+  .field input{background:var(--panel2);border:1px solid var(--line2);color:var(--txt);border-radius:6px;padding:5px 7px;font:inherit;font-size:12px;width:80px}
+  .note{font-size:11.5px;color:var(--muted);line-height:1.6;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="logo"><span class="mark"></span><div><h1>Capacity Studio</h1><small>INBOUND COVERAGE · 5A–5P</small></div></div>
+    <div class="sec">Volume data</div>
+    <div class="upload" id="csvUp">Upload call volume CSV<br><span class="mini" id="csvDown">or download template</span></div>
+    <div class="sec" id="agHead">Agents</div>
+    <div id="agList"></div>
+    <button class="btn" id="addAgent" style="width:100%;margin-top:10px">+ Add agent</button>
+    <input type="file" id="csvFile" accept=".csv" style="display:none">
+  </aside>
+
+  <div class="main">
+    <div class="kpibar" id="kpis"></div>
+    <div class="tabs">
+      <button class="tab active" data-tab="timeline">Timeline</button>
+      <button class="tab" data-tab="shifts">Shifts</button>
+      <button class="tab" data-tab="charts">Charts</button>
+      <button class="tab" data-tab="heat">Heat map</button>
+      <button class="tab" data-tab="rec">Fix-it</button>
+      <button class="tab" data-tab="dem">Data</button>
+    </div>
+    <div class="content" id="tab-timeline"></div>
+    <div class="content hide" id="tab-shifts"></div>
+    <div class="content hide" id="tab-charts"></div>
+    <div class="content hide" id="tab-heat"></div>
+    <div class="content hide" id="tab-rec"></div>
+    <div class="content hide" id="tab-dem"></div>
+  </div>
+</div>
+
+<script>
+const HOURS=[5,6,7,8,9,10,11,12,13,14,15,16];
+const DAY_START=5, DAY_END=17, SPAN=DAY_END-DAY_START;
+const fmtH=h=>{const ap=h>=12?'p':'a';let x=h%12;if(x===0)x=12;return x+ap;};
+const idx=h=>HOURS.indexOf(h);
+
+const SHIFTS={
+  open530:{label:'5:00a-1:30p',start:5,end:13.5,lunch:9},
+  early630:{label:'6:00a-2:30p',start:6,end:14.5,lunch:10},
+  mid730:{label:'7:00a-3:30p',start:7,end:15.5,lunch:11},
+  mid8:{label:'8:00a-4:30p',start:8,end:16.5,lunch:12},
+  close830:{label:'8:30a-5:00p',start:8.5,end:17,lunch:12},
+};
+const SHIFT_KEYS=Object.keys(SHIFTS);
+
+let state={};
+
+function sampleState(){
+  const queues=[
+    {id:'tech',name:'Tech',color:'#18a5be'},
+    {id:'billing',name:'Billing',color:'#e8512d'},
+    {id:'labs',name:'Labs',color:'#3fae74'},
+    {id:'medeo',name:'Medeo',color:'#5b8def'},
+    {id:'config',name:'Config',color:'#e0a82e'},
+  ];
+  const dailyQ={tech:250,billing:158,labs:92,medeo:92,config:66};
+  const shape=[0.30,0.55,0.80,0.98,1.0,1.0,0.92,0.74,0.80,0.66,0.46,0.30];
+  const sShape=shape.reduce((a,b)=>a+b,0);
+  const demand={};
+  queues.forEach(q=>{ demand[q.id]=shape.map(s=>Math.round(dailyQ[q.id]*s/sShape)); });
+  const plan=[['tech',16],['billing',12],['labs',7],['medeo',6],['config',5]];
+  const cycle=['open530','open530','early630','mid730','mid8','mid8','close830','close830'];
+  const sec={tech:'config',billing:'tech',labs:'medeo',medeo:'labs',config:'tech'};
+  const agents=[];let n=0;
+  plan.forEach(([qid,c])=>{ for(let i=0;i<c;i++){ n++; const skills=[qid]; if(n%3===0) skills.push(sec[qid]);
+    agents.push({id:'a'+n,name:'Agent '+n,skills,shift:cycle[n%cycle.length]}); } });
+  return {queues,demand,agents,params:{callsPerDay:12,lunchMin:30,breakMin:30,offPhoneMin:60}};
+}
+
+function workedBuckets(sh){ const a=[]; HOURS.forEach(h=>{ if(h>=Math.floor(sh.start) && (h+1)<=Math.ceil(sh.end)) a.push(h); }); return a; }
+function agentCapacity(agent,p){
+  const sh=SHIFTS[agent.shift]; const wb=workedBuckets(sh);
+  const w={}; let sum=0;
+  wb.forEach(h=>{ let wt=(h===sh.lunch)?0:1;
+    if(h===Math.floor(sh.start)&&sh.start%1!==0) wt*=0.5;
+    if(h+1>sh.end) wt*=0.5; w[h]=wt; sum+=wt; });
+  const cap={}; wb.forEach(h=>{ cap[h]= sum>0 ? p.callsPerDay*w[h]/sum : 0; });
+  return cap;
+}
+
+function computeInterval(h,st){
+  const need={},agentsHere=[];
+  st.queues.forEach(q=>{ need[q.id]=st.demand[q.id][idx(h)]||0; });
+  st.agents.forEach(a=>{ const c=(agentCapacity(a,st.params)[h])||0; if(c>0) agentsHere.push({a,c}); });
+  const alloc={}; st.queues.forEach(q=>alloc[q.id]=0);
+  const singles=agentsHere.filter(x=>x.a.skills.length===1);
+  const multis=agentsHere.filter(x=>x.a.skills.length>1);
+  singles.forEach(x=>alloc[x.a.skills[0]]+=x.c);
+  multis.sort((p,q)=>p.a.skills.length-q.a.skills.length);
+  multis.forEach(x=>{ let best=null,g=-Infinity; x.a.skills.forEach(s=>{const gap=need[s]-alloc[s]; if(gap>g){g=gap;best=s;}}); alloc[best]+=x.c; });
+  const deficit={},surplus={};
+  st.queues.forEach(q=>{ const d=need[q.id]-alloc[q.id]; deficit[q.id]=Math.max(0,d); surplus[q.id]=Math.max(0,-d); });
+  return {need,alloc,deficit,surplus};
+}
+
+function computeAll(st){
+  const cells={}; let totNeed=0,totCap=0,totDef=0,covered=0,cnt=0;
+  const perQ={},perH={}; st.queues.forEach(q=>perQ[q.id]=0);
+  HOURS.forEach(h=>{ const r=computeInterval(h,st); cells[h]=r; perH[h]=0;
+    st.queues.forEach(q=>{ totNeed+=r.need[q.id]; totCap+=r.alloc[q.id]; totDef+=r.deficit[q.id];
+      perQ[q.id]+=r.deficit[q.id]; perH[h]+=r.deficit[q.id]; cnt++; if(r.deficit[q.id]<0.5) covered++; }); });
+  let wH=null,wHv=-1; Object.entries(perH).forEach(([h,d])=>{if(d>wHv){wHv=d;wH=+h;}});
+  let wQ=null,wQv=-1; Object.entries(perQ).forEach(([q,d])=>{if(d>wQv){wQv=d;wQ=q;}});
+  return {cells,totNeed,totCap,totDef,coverage:cnt?covered/cnt:1,worstHour:wH,worstHourDef:wHv,worstQ:wQ,worstQDef:wQv,perQ};
+}
+
+const qById=id=>state.queues.find(q=>q.id===id);
+const C=()=>computeAll(state);
+
+function renderKPIs(res){
+  const cov=Math.round(res.coverage*100);
+  const covc=cov>=90?'var(--good)':cov>=70?'var(--warn)':'var(--bad)';
+  const wq=res.worstQ?qById(res.worstQ):null;
+  const cap=Math.round(res.totCap), vol=Math.round(res.totNeed), def=Math.round(res.totDef);
+  document.getElementById('kpis').innerHTML=`
+   <div class="kpi"><div class="lab">Agents</div><div class="val">${state.agents.length}</div><div class="sub">${state.agents.filter(a=>a.skills.length>1).length} multi-skill</div></div>
+   <div class="kpi"><div class="lab">Calls/agent/day</div><div class="val">${state.params.callsPerDay}</div><div class="sub">-2.0h off-phone</div></div>
+   <div class="kpi"><div class="lab">Capacity</div><div class="val">${cap}</div><div class="sub">calls/day handled</div></div>
+   <div class="kpi"><div class="lab">Volume</div><div class="val">${vol}</div><div class="sub">calls/day offered</div></div>
+   <div class="kpi hl"><div class="lab">Daily gap</div><div class="val" style="color:${def>0?'var(--bad)':'var(--good)'}">${def>0?'-':''}${def}</div><div class="sub">unanswered calls</div></div>
+   <div class="kpi hl"><div class="lab">Coverage</div><div class="val" style="color:${covc}">${cov}%</div><div class="sub">hour x queue met</div></div>
+   <div class="kpi"><div class="lab">Peak short</div><div class="val">${res.worstHourDef>0.5?fmtH(res.worstHour).toUpperCase():'-'}</div><div class="sub">${res.worstHourDef>0.5?('-'+Math.round(res.worstHourDef)+' calls'):'covered'}</div></div>
+   <div class="kpi"><div class="lab">Worst queue</div><div class="val" style="color:${wq?wq.color:''}">${res.worstQDef>0.5&&wq?wq.name:'-'}</div><div class="sub">${res.worstQDef>0.5?('-'+Math.round(res.worstQDef)+'/day'):'covered'}</div></div>`;
+}
+
+function renderSidebar(){
+  document.getElementById('agHead').textContent='Agents ('+state.agents.length+')';
+  const el=document.getElementById('agList');
+  el.innerHTML=state.agents.map((a,i)=>`
+    <div class="agrow">
+      <div class="top"><span class="nm">${a.name}</span>
+        <select data-ai="${i}" class="shiftSel">${SHIFT_KEYS.map(k=>`<option value="${k}" ${a.shift===k?'selected':''}>${SHIFTS[k].label}</option>`).join('')}</select></div>
+      <div class="sk">${state.queues.map(q=>`<span class="chip ${a.skills.includes(q.id)?'on':''}" data-ai="${i}" data-q="${q.id}" style="border-color:${q.color};color:${a.skills.includes(q.id)?q.color:'var(--muted)'}">${q.name}</span>`).join('')}</div>
+    </div>`).join('');
+  el.querySelectorAll('.chip').forEach(s=>s.onclick=()=>{ const a=state.agents[+s.dataset.ai],q=s.dataset.q;
+    if(a.skills.includes(q)){ if(a.skills.length>1) a.skills=a.skills.filter(x=>x!==q);} else a.skills.push(q); refresh(); });
+  el.querySelectorAll('.shiftSel').forEach(s=>s.onchange=()=>{ state.agents[+s.dataset.ai].shift=s.value; refresh(); });
+}
+
+function renderTimeline(){
+  const el=document.getElementById('tab-timeline');
+  let html=`<div class="toolbar"><button class="btn coral" id="optimize">Optimize shifts</button><span class="muted small">Each bar = an agent's shift; the notch is lunch. Grouped by primary focus.</span></div>`;
+  html+=`<div class="tl-head"><div class="tl-lab"></div><div class="tl-axis">`;
+  HOURS.concat([17]).forEach(h=>{ const left=((h-DAY_START)/SPAN)*100; html+=`<span style="left:${left}%">${fmtH(h)}</span><div class="gtick" style="left:${left}%"></div>`; });
+  html+=`</div></div>`;
+  state.queues.forEach(q=>{
+    const list=state.agents.filter(a=>a.skills[0]===q.id);
+    if(!list.length) return;
+    html+=`<div class="qgroup" style="color:${q.color}">${q.name}</div>`;
+    list.forEach(a=>{
+      const sh=SHIFTS[a.shift];
+      const L=((sh.start-DAY_START)/SPAN)*100, W=((sh.end-sh.start)/SPAN)*100;
+      const lL=((sh.lunch-DAY_START)/SPAN)*100 - L, lW=(1/SPAN)*100;
+      html+=`<div class="tl-row"><div class="tl-lab muted">${a.name}${a.skills.length>1?' <span style="color:'+qById(a.skills[1]).color+'">+'+qById(a.skills[1]).name+'</span>':''}</div>
+        <div class="tl-track"><div class="bar" style="left:${L}%;width:${W}%;background:${q.color}">${a.name.replace('Agent ','#')}<div class="lunch" style="left:${(lL/W)*100}%;width:${(lW/W)*100}%"></div></div></div></div>`;
+    });
+  });
+  el.innerHTML=html;
+  el.querySelector('#optimize').onclick=optimize;
+}
+
+function renderShifts(){
+  const el=document.getElementById('tab-shifts');
+  let html=`<div class="toolbar"><span class="muted small">Agents grouped by shift x focus. Change anyone's shift or skills in the left panel.</span></div>`;
+  html+=`<div class="board" style="grid-template-columns:120px repeat(${SHIFT_KEYS.length},1fr)">`;
+  html+=`<div class="bhead"></div>`+SHIFT_KEYS.map(k=>`<div class="bhead">${SHIFTS[k].label}<br><span class="muted">${state.agents.filter(a=>a.shift===k).length}</span></div>`).join('');
+  state.queues.forEach(q=>{
+    html+=`<div class="bhead" style="text-align:left;color:${q.color};align-self:center">${q.name}</div>`;
+    SHIFT_KEYS.forEach(k=>{
+      const list=state.agents.filter(a=>a.shift===k&&a.skills[0]===q.id);
+      html+=`<div class="bcell">${list.map(a=>`<span class="agc" style="border-color:${q.color};color:${q.color}">${a.name.replace('Agent ','#')}${a.skills.length>1?'+':''}</span>`).join('')}</div>`;
+    });
+  });
+  html+=`</div>`;
+  el.innerHTML=html;
+}
+
+function miniChart(q,res){
+  const W=300,H=110,padL=22,padB=16,padT=8;
+  const caps=HOURS.map(h=>res.cells[h].alloc[q.id]);
+  const needs=HOURS.map(h=>res.cells[h].need[q.id]);
+  const max=Math.max(1,...caps,...needs);
+  const bw=(W-padL-4)/HOURS.length;
+  const y=v=>padT+(H-padT-padB)*(1-v/max);
+  const x=i=>padL+i*bw;
+  let bars='',line='';
+  HOURS.forEach((h,i)=>{ const c=caps[i],n=needs[i],short=n-c>0.5;
+    const top=y(c),bh=(H-padT-padB)-(top-padT);
+    bars+=`<rect x="${x(i)+1}" y="${top}" width="${bw-2}" height="${Math.max(0,bh)}" rx="1" fill="${short?'rgba(232,81,45,.45)':'rgba(63,174,116,.4)'}"/>`;
+    if(short) bars+=`<text x="${x(i)+bw/2}" y="${top+11}" font-size="8" fill="#ffb4a4" text-anchor="middle">-${Math.round(n-c)}</text>`;
+  });
+  needs.forEach((n,i)=>{ const px=x(i)+bw/2,py=y(n); line+=(i===0?'M':'L')+px+' '+py+' '; });
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" preserveAspectRatio="none" style="height:110px">
+    ${bars}<path d="${line}" fill="none" stroke="${q.color}" stroke-width="1.6"/>
+    <line x1="${padL}" y1="${H-padB}" x2="${W}" y2="${H-padB}" stroke="var(--line2)" stroke-width=".5"/>
+    ${HOURS.filter((h,i)=>i%3===0).map(h=>`<text x="${x(idx(h))+bw/2}" y="${H-4}" font-size="8" fill="var(--faint)" text-anchor="middle">${fmtH(h)}</text>`).join('')}
+   </svg>`;
+}
+function renderCharts(res){
+  const el=document.getElementById('tab-charts');
+  let html=`<div class="toolbar"><span class="muted small">Bars = capacity (calls handled), line = demand (calls offered). Red bars are short.</span></div><div class="charts">`;
+  state.queues.forEach(q=>{
+    const cap=Math.round(HOURS.reduce((a,h)=>a+res.cells[h].alloc[q.id],0));
+    const vol=Math.round(HOURS.reduce((a,h)=>a+res.cells[h].need[q.id],0));
+    const def=Math.round(res.perQ[q.id]);
+    html+=`<div class="chart"><div class="ct"><div class="nm" style="color:${q.color}">${q.name}
+       ${def>0?`<span class="tag" style="background:var(--badbg);color:#ffb4a4">-${def} calls/day</span>`:`<span class="tag" style="background:var(--goodbg);color:#a7e8c2">covered</span>`}</div>
+       <div class="st">cap ${cap} &middot; vol ${vol}</div></div>${miniChart(q,res)}</div>`;
+  });
+  html+=`</div>`;
+  el.innerHTML=html;
+}
+
+function cellStyle(d,s){
+  if(d>0.5){const t=Math.min(1,d/40);return `background:rgba(232,81,45,${0.18+t*0.6});color:#ffe0d8`;}
+  if(s>0.5){const t=Math.min(1,s/40);return `background:rgba(63,174,116,${0.12+t*0.4});color:#d7ffe7`;}
+  return `background:rgba(63,174,116,.10);color:#bfe9cc`;
+}
+function renderHeat(res){
+  const el=document.getElementById('tab-heat');
+  let html=`<div class="toolbar"><span class="muted small">Calls short (-) or surplus (+) per hour. Small number = calls offered that hour.</span></div>`;
+  html+=`<div style="overflow-x:auto"><table class="hm"><thead><tr><th></th>${HOURS.map(h=>`<th>${fmtH(h)}</th>`).join('')}<th style="color:var(--faint)">day</th></tr></thead><tbody>`;
+  state.queues.forEach(q=>{
+    let day=0; html+=`<tr><td class="qn"><span class="qdot" style="background:${q.color}"></span>${q.name}</td>`;
+    HOURS.forEach(h=>{ const c=res.cells[h],d=c.deficit[q.id],s=c.surplus[q.id]; day+=d;
+      const t=d>0.5?('-'+Math.round(d)):(s>0.5?('+'+Math.round(s)):'ok');
+      html+=`<td class="cell" style="${cellStyle(d,s)}" title="${q.name} ${fmtH(h)} - need ${Math.round(c.need[q.id])}, handle ${Math.round(c.alloc[q.id])}">${t}<small>${Math.round(c.need[q.id])}</small></td>`; });
+    html+=`<td class="cell" style="${cellStyle(day,0)};font-weight:700">${day>0.5?('-'+Math.round(day)):'ok'}</td></tr>`;
+  });
+  html+=`<tr><td class="qn muted">All</td>${HOURS.map(h=>{const d=Object.values(res.cells[h].deficit).reduce((a,b)=>a+b,0);return `<td class="cell" style="${cellStyle(d,0)};font-weight:700">${d>0.5?('-'+Math.round(d)):'ok'}</td>`;}).join('')}<td class="cell" style="${cellStyle(res.totDef,0)};font-weight:700">${res.totDef>0.5?('-'+Math.round(res.totDef)):'ok'}</td></tr>`;
+  html+=`</tbody></table></div><div class="legend">
+    <span><span class="sw" style="background:rgba(232,81,45,.6)"></span>short (-calls)</span>
+    <span><span class="sw" style="background:rgba(63,174,116,.4)"></span>surplus</span>
+    <span><span class="sw" style="background:rgba(63,174,116,.1)"></span>covered</span></div>`;
+  el.innerHTML=html;
+}
+
+const clone=s=>JSON.parse(JSON.stringify(s));
+const totDef=s=>computeAll(s).totDef;
+function recommend(){
+  const base=totDef(state); const cands=[];
+  if(base<=0.5) return {base,list:[]};
+  state.agents.forEach((a,ai)=>{ state.queues.forEach(q=>{ if(a.skills.includes(q.id))return;
+    const s=clone(state);s.agents[ai].skills.push(q.id);const imp=base-totDef(s);
+    if(imp>0.5)cands.push({type:'cross',ai,q:q.id,imp,text:`Cross-train <b>${a.name}</b> in <b>${q.name}</b>`,sub:`now ${a.skills.map(x=>qById(x).name).join('/')} + ${q.name}`});});});
+  state.agents.forEach((a,ai)=>{ SHIFT_KEYS.forEach(k=>{ if(k===a.shift)return;
+    const s=clone(state);s.agents[ai].shift=k;const imp=base-totDef(s);
+    if(imp>0.5)cands.push({type:'shift',ai,shift:k,imp,text:`Move <b>${a.name}</b> to <b>${SHIFTS[k].label}</b>`,sub:`from ${SHIFTS[a.shift].label}`});});});
+  const res=computeAll(state);
+  if(res.worstQ) ['open530','mid8','close830'].forEach(k=>{ const s=clone(state);
+    s.agents.push({id:'new',name:'New hire',skills:[res.worstQ],shift:k});const imp=base-totDef(s);
+    if(imp>0.5)cands.push({type:'add',q:res.worstQ,shift:k,imp,text:`Add 1 <b>${qById(res.worstQ).name}</b> agent on <b>${SHIFTS[k].label}</b>`,sub:'new headcount'});});
+  cands.sort((x,y)=>y.imp-x.imp);
+  const seen=new Set(),list=[];
+  for(const c of cands){const key=c.type+(c.ai??'')+(c.q??'')+(c.shift??'');if(seen.has(key))continue;seen.add(key);list.push(c);if(list.length>=8)break;}
+  return {base,list};
+}
+function renderRecs(){
+  const el=document.getElementById('tab-rec');
+  el.innerHTML=`<div class="muted small">Ranking fixes by calls/day recovered...</div>`;
+  setTimeout(()=>{
+    const {base,list}=recommend();
+    let html=`<div class="toolbar"><b style="font-size:14px">${base>0.5?('Current gap: -'+Math.round(base)+' calls/day'):'Fully covered'}</b><button class="btn" id="regen">Regenerate</button></div>`;
+    if(!list.length) html+=`<div class="note">No single move helps further - remaining gaps need added headcount or higher calls/agent. Try the Data tab.</div>`;
+    const ic={cross:'&#8644;',shift:'&#9201;',add:'+'},co={cross:'#18a5be',shift:'#e0a82e',add:'#3fae74'};
+    list.forEach((c,i)=>{ html+=`<div class="rec"><div class="ic" style="background:${co[c.type]}22;color:${co[c.type]}">${ic[c.type]}</div>
+      <div class="bd"><div>${c.text}<span class="pill">${c.type==='cross'?'cross-train':c.type==='shift'?'reshuffle':'hire'}</span></div><div class="muted small">${c.sub}</div></div>
+      <div class="imp">+${Math.round(c.imp)} calls</div><button class="btn small" data-ap="${i}">Apply</button></div>`; });
+    el.innerHTML=html;
+    const rg=el.querySelector('#regen'); if(rg) rg.onclick=renderRecs;
+    el.querySelectorAll('[data-ap]').forEach(b=>b.onclick=()=>{ const c=list[+b.dataset.ap];
+      if(c.type==='cross')state.agents[c.ai].skills.push(c.q);
+      else if(c.type==='shift')state.agents[c.ai].shift=c.shift;
+      else state.agents.push({id:'a'+Date.now(),name:'Agent '+(state.agents.length+1),skills:[c.q],shift:c.shift});
+      refresh();renderRecs(); });
+  },20);
+}
+
+function optimize(){
+  let improved=true,guard=0;
+  while(improved&&guard<200){ improved=false;guard++;
+    const base=totDef(state);
+    let best=null,bestImp=0.5;
+    state.agents.forEach((a,ai)=>{ SHIFT_KEYS.forEach(k=>{ if(k===a.shift)return;
+      const s=clone(state);s.agents[ai].shift=k;const imp=base-totDef(s);
+      if(imp>bestImp){bestImp=imp;best={ai,k};} }); });
+    if(best){ state.agents[best.ai].shift=best.k; improved=true; }
+  }
+  const after=computeAll(state);
+  refresh();
+  if(after.totDef>5){
+    const cpd=state.params.callsPerDay;
+    const need=Math.ceil(after.totNeed/cpd)-state.agents.length;
+    const cpdNeed=(after.totNeed/state.agents.length).toFixed(1);
+    flash(need>0?('Shifts balanced - still -'+Math.round(after.totDef)+'/day. Need ~'+need+' more agents (or ~'+cpdNeed+' calls/agent/day) to break even'):'Shifts balanced');
+  } else flash('Optimized - fully covered');
+}
+
+function renderDemand(){
+  const el=document.getElementById('tab-dem');const P=state.params;
+  let html=`<h3 style="font-size:13px;margin-bottom:8px">Capacity assumptions</h3><div class="toolbar">
+    <div class="field"><label>Calls / agent / day</label><input type="number" id="p_cpd" value="${P.callsPerDay}"></div>
+    <div class="field"><label>Lunch (min)</label><input type="number" id="p_l" value="${P.lunchMin}"></div>
+    <div class="field"><label>Break (min)</label><input type="number" id="p_b" value="${P.breakMin}"></div>
+    <div class="field"><label>Off-phone (min)</label><input type="number" id="p_o" value="${P.offPhoneMin}"></div></div>
+    <div class="note">Each agent handles <b>${P.callsPerDay} calls/day</b>, spread across their on-phone hours (shift minus ${(P.lunchMin+P.breakMin+P.offPhoneMin)} min for lunch + break + off-phone). Lunch shows as a mid-shift dip in the timeline and heatmap.</div>
+    <h3 style="font-size:13px;margin:18px 0 8px">Call volume by hour <span class="muted small">(calls offered - example data, edit freely)</span></h3>
+    <div class="toolbar"><button class="btn" id="csvUp2">Upload CSV</button><button class="btn" id="csvDown2">Download CSV</button></div>
+    <div style="overflow-x:auto"><table class="grid-dem"><thead><tr><th>Queue</th>${HOURS.map(h=>`<th>${fmtH(h)}</th>`).join('')}<th>/day</th></tr></thead><tbody>`;
+  state.queues.forEach((q,qi)=>{ let t=0;
+    html+=`<tr><td style="text-align:left;color:${q.color};font-weight:600">${q.name}</td>`;
+    HOURS.forEach((h,hi)=>{const v=state.demand[q.id][hi];t+=v;html+=`<td><input type="number" data-dq="${qi}" data-dh="${hi}" value="${v}"></td>`;});
+    html+=`<td class="muted">${t}</td></tr>`; });
+  html+=`</tbody></table></div>`;
+  el.innerHTML=html;
+  const bind=(id,k)=>{const e=el.querySelector(id);e.onchange=()=>{P[k]=+e.value||0;refresh();};};
+  bind('#p_cpd','callsPerDay');bind('#p_l','lunchMin');bind('#p_b','breakMin');bind('#p_o','offPhoneMin');
+  el.querySelectorAll('[data-dq]').forEach(inp=>inp.onchange=()=>{state.demand[state.queues[+inp.dataset.dq].id][+inp.dataset.dh]=+inp.value||0;refresh();});
+  el.querySelector('#csvDown2').onclick=downloadCSV; el.querySelector('#csvUp2').onclick=()=>document.getElementById('csvFile').click();
+}
+
+function downloadCSV(){ let rows=['queue,'+HOURS.map(fmtH).join(',')];
+  state.queues.forEach(q=>rows.push(q.name+','+state.demand[q.id].join(',')));
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'}));a.download='call_volume.csv';a.click(); }
+function importCSV(text){ const lines=text.trim().split(/\r?\n/);
+  for(let i=1;i<lines.length;i++){const p=lines[i].split(',');const q=state.queues.find(x=>x.name.toLowerCase()===p[0].trim().toLowerCase()||x.id===p[0].trim().toLowerCase());
+    if(q){const v=p.slice(1).map(n=>+n||0);HOURS.forEach((h,hi)=>{if(v[hi]!=null)state.demand[q.id][hi]=v[hi];});}}
+  refresh();flash('Volumes updated'); }
+function flash(m){const d=document.createElement('div');d.textContent=m;d.style.cssText='position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--teal);color:#04222a;padding:7px 15px;border-radius:8px;font-weight:600;z-index:99;max-width:80%;text-align:center';document.body.appendChild(d);setTimeout(()=>d.remove(),2600);}
+
+let active='timeline';
+function refresh(){ const res=C(); renderKPIs(res); renderSidebar();
+  if(active==='timeline')renderTimeline();
+  if(active==='shifts')renderShifts();
+  if(active==='charts')renderCharts(res);
+  if(active==='heat')renderHeat(res);
+  if(active==='dem')renderDemand();
+}
+function setTab(t){ active=t; document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));
+  ['timeline','shifts','charts','heat','rec','dem'].forEach(x=>document.getElementById('tab-'+x).classList.toggle('hide',x!==t));
+  if(t==='rec')renderRecs(); else refresh(); }
+
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
+document.getElementById('addAgent').onclick=()=>{state.agents.push({id:'a'+Date.now(),name:'Agent '+(state.agents.length+1),skills:[state.queues[0].id],shift:'mid8'});refresh();};
+document.getElementById('csvUp').onclick=()=>document.getElementById('csvFile').click();
+document.getElementById('csvDown').onclick=e=>{e.stopPropagation();downloadCSV();};
+document.getElementById('csvFile').onchange=e=>{const f=e.target.files[0];if(f){const r=new FileReader();r.onload=()=>importCSV(r.result);r.readAsText(f);}};
+
+state=sampleState();
+refresh();
+</script>
+</body>
+</html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
