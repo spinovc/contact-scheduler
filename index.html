@@ -16,7 +16,7 @@
   h1,h2,h3{font-weight:600;margin:0}
   button{font:inherit;cursor:pointer}
   .app{display:flex;min-height:100vh}
-  .side{width:312px;flex:none;background:var(--panel);border-right:1px solid var(--line);padding:14px;overflow-y:auto;max-height:100vh}
+  .side{width:316px;flex:none;background:var(--panel);border-right:1px solid var(--line);padding:14px;overflow-y:auto;max-height:100vh}
   .logo{display:flex;align-items:center;gap:8px;margin-bottom:4px}
   .logo .mark{width:15px;height:15px;background:var(--coral);border-radius:3px;transform:rotate(45deg)}
   .logo h1{font-size:16px;letter-spacing:.2px}
@@ -25,18 +25,22 @@
   .upload{border:1px dashed var(--line2);border-radius:8px;padding:10px;text-align:center;color:var(--muted);font-size:12.5px;cursor:pointer}
   .upload:hover{border-color:var(--teal);color:var(--txt)}
   .agrow{padding:8px 0;border-bottom:1px solid var(--line)}
+  .agrow.locked{background:rgba(224,168,46,.05)}
   .agrow .top{display:flex;justify-content:space-between;align-items:center;gap:6px}
-  .nminput{background:transparent;border:1px solid transparent;color:var(--txt);font-weight:600;font-size:12.5px;width:96px;padding:2px 4px;border-radius:5px}
+  .nminput{background:transparent;border:1px solid transparent;color:var(--txt);font-weight:600;font-size:12.5px;width:92px;padding:2px 4px;border-radius:5px}
   .nminput:hover{border-color:var(--line2)}
   .nminput:focus{background:var(--panel2);outline:none;border-color:var(--teal)}
   .fac{font-size:10.5px;font-weight:600;padding:0 6px;border-radius:8px;margin-left:2px}
   .agrow .sk{margin-top:5px;display:flex;flex-wrap:wrap;gap:3px}
   .ctrls{display:flex;gap:4px;align-items:center}
-  .xbtn{background:none;border:1px solid var(--line2);color:var(--bad);border-radius:6px;width:24px;height:24px;line-height:1;font-size:15px;padding:0}
-  .xbtn:hover{background:var(--badbg);border-color:var(--bad)}
+  .iconbtn{background:none;border:1px solid var(--line2);border-radius:6px;width:24px;height:24px;line-height:1;font-size:12px;padding:0;color:var(--muted)}
+  .iconbtn.del{color:var(--bad);font-size:15px}
+  .iconbtn.del:hover{background:var(--badbg);border-color:var(--bad)}
+  .iconbtn.lock.on{color:var(--warn);border-color:var(--warn);background:rgba(224,168,46,.14)}
   .chip{font-size:10.5px;padding:2px 7px;border-radius:10px;border:1px solid var(--line2);cursor:pointer;user-select:none;opacity:.38}
   .chip.on{opacity:1}
-  select{background:var(--panel2);border:1px solid var(--line2);color:var(--txt);border-radius:6px;padding:3px 5px;font:inherit;font-size:11px;max-width:112px}
+  select{background:var(--panel2);border:1px solid var(--line2);color:var(--txt);border-radius:6px;padding:3px 5px;font:inherit;font-size:11px}
+  .shiftSel{max-width:112px}
   .mini{font-size:11px;color:var(--faint)}
   .main{flex:1;min-width:0;display:flex;flex-direction:column;max-height:100vh;overflow:hidden}
   .kpibar{display:flex;gap:1px;background:var(--line);border-bottom:1px solid var(--line)}
@@ -46,7 +50,7 @@
   .kpi .val{font-size:21px;font-weight:700;margin-top:3px;line-height:1.15}
   .kpi .sub{font-size:10.5px;color:var(--muted)}
   .tabs{display:flex;gap:2px;padding:9px 16px 0;background:var(--bg);flex-wrap:wrap}
-  .tab{background:none;border:none;color:var(--muted);padding:8px 16px;font-size:13.5px;border-radius:8px 8px 0 0}
+  .tab{background:none;border:none;color:var(--muted);padding:8px 15px;font-size:13.5px;border-radius:8px 8px 0 0}
   .tab.active{color:var(--txt);background:var(--panel)}
   .content{flex:1;overflow:auto;padding:16px;background:var(--panel);margin:0 16px 16px;border-radius:0 10px 10px 10px}
   .hide{display:none}
@@ -55,14 +59,15 @@
   .btn:hover{border-color:var(--teal)}
   .btn.coral{background:var(--coral);border-color:var(--coral);color:#2a0c04;font-weight:600}
   .btn.teal{background:var(--teal);border-color:var(--teal);color:#04222a;font-weight:600}
+  input[type=text]{background:var(--panel2);border:1px solid var(--line2);color:var(--txt);border-radius:7px;padding:7px 10px;font:inherit;font-size:12.5px}
   .bgrid{display:grid;grid-template-columns:210px repeat(12,1fr);gap:3px;min-width:900px;align-items:center}
   .bghead{font-size:11px;color:var(--muted);text-align:center;padding:2px 0}
   .bglab{display:flex;flex-direction:column;justify-content:center;padding-right:8px;overflow:hidden;white-space:nowrap}
   .bglab .nm{font-size:12.5px;font-weight:600}
   .bggroup{grid-column:1 / -1;font-size:12.5px;font-weight:600;margin-top:10px;display:flex;align-items:center;gap:7px}
-  .blk{height:28px;border-radius:5px;background:var(--panel2);border:1px solid var(--line);cursor:pointer;transition:filter .08s;display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:700;color:#0c1626;letter-spacing:.2px}
-  .blk:hover{filter:brightness(1.25)}
-  .blk.lunch{opacity:.65;background-image:repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(13,21,36,.45) 3px,rgba(13,21,36,.45) 6px)}
+  .blk{height:28px;border-radius:5px;background:var(--panel2);border:1px solid var(--line);cursor:grab;transition:filter .08s;display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:700;color:#0c1626;letter-spacing:.2px}
+  .blk:hover{filter:brightness(1.2)}
+  .blk.noph{background:var(--panel2);border-color:var(--line2);color:var(--muted);background-image:repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(255,255,255,.07) 3px,rgba(255,255,255,.07) 6px)}
   .blk.paint{outline:2px solid #fff;outline-offset:-2px}
   .qdot{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:middle}
   table.hm{border-collapse:separate;border-spacing:3px;width:100%}
@@ -123,6 +128,7 @@
       <button class="tab" data-tab="heat">Heat map</button>
       <button class="tab" data-tab="plan">Plan</button>
       <button class="tab" data-tab="rec">Fix-it</button>
+      <button class="tab" data-tab="save">Save / compare</button>
       <button class="tab" data-tab="dem">Data</button>
     </div>
     <div class="content" id="tab-timeline"></div>
@@ -131,6 +137,7 @@
     <div class="content hide" id="tab-heat"></div>
     <div class="content hide" id="tab-plan"></div>
     <div class="content hide" id="tab-rec"></div>
+    <div class="content hide" id="tab-save"></div>
     <div class="content hide" id="tab-dem"></div>
   </div>
 </div>
@@ -140,6 +147,7 @@ const HOURS=[5,6,7,8,9,10,11,12,13,14,15,16];
 const DAY_START=5, DAY_END=17, LATEST_END=17.25, SPAN=DAY_END-DAY_START;
 const SHAPE=[0.30,0.55,0.80,0.98,1.0,1.0,0.92,0.74,0.80,0.66,0.46,0.30];
 const LUNCH_WINDOW=5;
+const SKEY='accuroScenarios';
 const fmtH=h=>{const ap=h>=12?'p':'a';let x=Math.floor(h)%12;if(x===0)x=12;return x+ap;};
 const fmtHM=h=>{let hh=Math.floor(h);const m=Math.round((h-hh)*60);const ap=hh>=12?'p':'a';let d=hh%12;if(d===0)d=12;return d+(m?(':'+String(m).padStart(2,'0')):'')+ap;};
 const idx=h=>HOURS.indexOf(h);
@@ -170,24 +178,35 @@ function sampleState(){
   const agents=[];let n=0;
   plan.forEach(([qid,c])=>{ for(let i=0;i<c;i++){ n++; const skills=[qid]; if(n%3===0) skills.push(sec[qid]);
     const pr=PRESETS[n%PRESETS.length];
-    const a={id:'a'+n,name:'Agent '+n,skills,start:pr.s,end:pr.e}; a.lunch=defaultLunch(a); agents.push(a); } });
-  return {queues,demand,agents,params:{callsPerDay:12,lunchMin:30,breakMin:30,offPhoneMin:60,skillPenalty:0.20}};
+    const a={id:'a'+n,name:'Agent '+n,skills,start:pr.s,end:pr.e,lunchMin:30,locked:false}; placeBreaks(a); agents.push(a); } });
+  return {queues,demand,agents,params:{callsPerDay:12,skillPenalty:0.20}};
 }
 
 function skillFactor(agent,p){ return Math.max(0.2, 1 - (p.skillPenalty||0)*(agent.skills.length-1)); }
 function workedBuckets(a){ const out=[]; HOURS.forEach(h=>{ if(h>=Math.floor(a.start) && h<a.end) out.push(h); }); return out; }
 function lunchCandidates(a){ const wb=workedBuckets(a); if(!wb.length) return []; let c=wb.filter(h=>h<a.start+LUNCH_WINDOW); if(!c.length)c=wb.slice(); const interior=c.filter(h=>h!==wb[0]&&h!==wb[wb.length-1]); return interior.length?interior:c; }
-function defaultLunch(a){ const c=lunchCandidates(a); if(c.length) return c[Math.floor(c.length/2)]; const wb=workedBuckets(a); return wb.length?wb[0]:Math.floor(a.start); }
 function lunchBucket(a){ const c=lunchCandidates(a); if(!c.length){ const wb=workedBuckets(a); return wb.length?wb[0]:Math.floor(a.start); } let lb=(a.lunch!=null)?a.lunch:c[Math.floor(c.length/2)]; return clamp(lb, c[0], c[c.length-1]); }
+function placeBreaks(a){
+  const wb=workedBuckets(a);
+  if(!wb.length){ a.lunch=a.break=a.off=Math.floor(a.start); return; }
+  const interior = wb.length>2 ? wb.slice(1,-1) : wb;
+  const lc=lunchCandidates(a); a.lunch = lc.length? lc[Math.floor(lc.length/2)] : interior[0];
+  const brC=interior.filter(h=>h!==a.lunch); a.break = brC.length? brC[0] : a.lunch;
+  const offC=interior.filter(h=>h!==a.lunch && h!==a.break); a.off = offC.length? offC[offC.length-1] : a.break;
+}
 function shiftLabel(a){ return fmtHM(a.start)+'-'+fmtHM(a.end); }
 function worksHour(a,h){ return h>=Math.floor(a.start) && h<a.end; }
 function agentCapacity(agent,p){
   const wb=workedBuckets(agent); const lb=lunchBucket(agent);
   const eff=p.callsPerDay*skillFactor(agent,p);
   const w={}; let sum=0;
-  wb.forEach(h=>{ let wt=(h===lb)?0:1;
+  wb.forEach(h=>{ let wt=1;
+    if(h===lb) wt*=((agent.lunchMin||30)>=60?0:0.5);
+    if(agent.break!=null && h===agent.break) wt*=0.5;
+    if(agent.off!=null && h===agent.off) wt*=0;
     if(h===Math.floor(agent.start)&&agent.start%1!==0) wt*=((h+1)-agent.start);
-    if(agent.end>h&&agent.end<h+1) wt*=(agent.end-h); w[h]=wt; sum+=wt; });
+    if(agent.end>h&&agent.end<h+1) wt*=(agent.end-h);
+    w[h]=wt; sum+=wt; });
   const cap={}; wb.forEach(h=>{ cap[h]= sum>0 ? eff*w[h]/sum : 0; });
   return cap;
 }
@@ -247,26 +266,26 @@ function renderSidebar(){
     const col=f>=1?'var(--good)':f>=0.6?'var(--warn)':'var(--bad)';
     const bg=f>=1?'rgba(63,174,116,.16)':f>=0.6?'rgba(224,168,46,.16)':'rgba(232,81,45,.16)';
     return `
-    <div class="agrow">
+    <div class="agrow ${a.locked?'locked':''}">
       <div class="top"><span style="display:flex;align-items:center"><input class="nminput" data-ai="${i}" value="${(a.name||'').replace(/"/g,'&quot;')}"><span class="fac" style="color:${col};background:${bg}">${f.toFixed(2)}×</span></span>
-        <span class="ctrls"><select data-ai="${i}" class="shiftSel">${PRESETS.map(pr=>`<option value="${pr.s}_${pr.e}" ${a.start===pr.s&&a.end===pr.e?'selected':''}>${fmtHM(pr.s)}-${fmtHM(pr.e)}</option>`).join('')}${PRESETS.some(pr=>pr.s===a.start&&pr.e===a.end)?'':`<option value="cur" selected>${shiftLabel(a)}</option>`}</select><button class="xbtn" data-del="${i}" title="Remove agent">×</button></span></div>
+        <span class="ctrls"><button class="iconbtn lock ${a.locked?'on':''}" data-lock="${i}" title="${a.locked?'Locked - Optimize/Auto will not move':'Lock shift'}">${a.locked?'&#128274;':'&#128275;'}</button><button class="iconbtn del" data-del="${i}" title="Remove agent">×</button></span></div>
       <div class="sk">${state.queues.map(q=>`<span class="chip ${a.skills.includes(q.id)?'on':''}" data-ai="${i}" data-q="${q.id}" style="border-color:${q.color};color:${a.skills.includes(q.id)?q.color:'var(--muted)'}">${q.name}</span>`).join('')}</div>
-      <div class="mini" style="margin-top:3px">lunch ${fmtH(lunchBucket(a))}</div>
+      <div style="display:flex;gap:6px;margin-top:5px;align-items:center">
+        <select data-ai="${i}" class="shiftSel">${PRESETS.map(pr=>`<option value="${pr.s}_${pr.e}" ${a.start===pr.s&&a.end===pr.e?'selected':''}>${fmtHM(pr.s)}-${fmtHM(pr.e)}</option>`).join('')}${PRESETS.some(pr=>pr.s===a.start&&pr.e===a.end)?'':`<option value="cur" selected>${shiftLabel(a)}</option>`}</select>
+        <select data-lm="${i}" class="lunchSel" title="Lunch length"><option value="30" ${(a.lunchMin||30)==30?'selected':''}>30m lunch</option><option value="60" ${(a.lunchMin||30)==60?'selected':''}>60m lunch</option></select>
+      </div>
+      <div class="mini" style="margin-top:3px">Lunch ${fmtH(lunchBucket(a))} · Break ${fmtH(a.break)} · Off ${fmtH(a.off)}</div>
     </div>`;}).join('');
   el.querySelectorAll('.nminput').forEach(inp=>inp.onchange=()=>{ state.agents[+inp.dataset.ai].name=inp.value||('Agent '+(+inp.dataset.ai+1)); refresh(); });
   el.querySelectorAll('.chip').forEach(s=>s.onclick=()=>{ const a=state.agents[+s.dataset.ai],q=s.dataset.q;
     if(a.skills.includes(q)){ if(a.skills.length>1) a.skills=a.skills.filter(x=>x!==q);} else a.skills.push(q); refresh(); });
-  el.querySelectorAll('.shiftSel').forEach(s=>s.onchange=()=>{ if(s.value==='cur')return; const [ss,ee]=s.value.split('_').map(Number); const a=state.agents[+s.dataset.ai]; a.start=ss; a.end=ee; a.lunch=defaultLunch(a); refresh(); });
+  el.querySelectorAll('.shiftSel').forEach(s=>s.onchange=()=>{ if(s.value==='cur')return; const [ss,ee]=s.value.split('_').map(Number); const a=state.agents[+s.dataset.ai]; a.start=ss; a.end=ee; placeBreaks(a); refresh(); });
+  el.querySelectorAll('.lunchSel').forEach(s=>s.onchange=()=>{ state.agents[+s.dataset.lm].lunchMin=+s.value; refresh(); });
+  el.querySelectorAll('[data-lock]').forEach(b=>b.onclick=()=>{ const a=state.agents[+b.dataset.lock]; a.locked=!a.locked; refresh(); });
   el.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{ state.agents.splice(+b.dataset.del,1); refresh(); });
 }
 
-let paint=null;
-function paintPreview(){ if(!paint)return; const lo=Math.min(paint.h0,paint.h1),hi=Math.max(paint.h0,paint.h1);
-  document.querySelectorAll('.blk[data-ai="'+paint.ai+'"]').forEach(c=>{ const h=+c.dataset.h; c.classList.toggle('paint', h>=lo&&h<=hi); }); }
-document.addEventListener('mouseup',()=>{ if(paint){ const lo=Math.min(paint.h0,paint.h1),hi=Math.max(paint.h0,paint.h1);
-  const a=state.agents[paint.ai]; a.start=lo; a.end=hi+1; a.lunch=defaultLunch(a); paint=null; refresh(); } });
-function blockStyle(a,h,q,lunch){
-  if(lunch) return `background:${q.color};border-color:transparent;`;
+function blockStyle(a,h,q){
   let fill=1, side='full';
   if(h===Math.floor(a.start) && a.start%1!==0){ fill=(h+1)-a.start; side='right'; }
   else if(a.end>h && a.end<h+1){ fill=a.end-h; side='left'; }
@@ -274,9 +293,27 @@ function blockStyle(a,h,q,lunch){
   if(side==='right'){ const p=Math.round((1-fill)*100); return `background:linear-gradient(to right,var(--panel2) ${p}%,${q.color} ${p}%);`; }
   const p=Math.round(fill*100); return `background:linear-gradient(to right,${q.color} ${p}%,var(--panel2) ${p}%);`;
 }
+function blkInfo(a,h){
+  if(!worksHour(a,h)) return {cls:'',style:'',label:''};
+  if(h===lunchBucket(a)) return {cls:'noph',style:'',label:'Lunch'};
+  if(a.break!=null && h===a.break) return {cls:'noph',style:'',label:'Break'};
+  if(a.off!=null && h===a.off) return {cls:'noph',style:'',label:'Off'};
+  return {cls:'',style:blockStyle(a,h,qById(a.skills[0])),label:''};
+}
+function updateRowDOM(ai){
+  const a=state.agents[ai];
+  document.querySelectorAll('.blk[data-ai="'+ai+'"]').forEach(c=>{ const h=+c.dataset.h; const info=blkInfo(a,h);
+    c.className='blk '+info.cls; c.setAttribute('style',info.style); c.textContent=info.label; });
+}
+let drag=null;
+function paintPreview(){ if(!drag||drag.mode!=='paint')return; const lo=Math.min(drag.h0,drag.h1),hi=Math.max(drag.h0,drag.h1);
+  document.querySelectorAll('.blk[data-ai="'+drag.ai+'"]').forEach(c=>{ const h=+c.dataset.h; c.classList.toggle('paint', h>=lo&&h<=hi); }); }
+document.addEventListener('mouseup',()=>{ if(!drag)return; const a=state.agents[drag.ai];
+  if(drag.mode==='paint'){ const lo=Math.min(drag.h0,drag.h1),hi=Math.max(drag.h0,drag.h1); a.start=lo; a.end=hi+1; }
+  placeBreaks(a); drag=null; refresh(); });
 function renderTimeline(){
   const el=document.getElementById('tab-timeline');
-  let html=`<div class="toolbar"><button class="btn coral" id="optimize">⚡ Optimize schedule</button><button class="btn teal" id="autolunch">Auto-stagger lunches</button><span class="muted small">Click-drag a row to set hours. Half blocks = 30-min starts/ends. "Lunch" = 30-min lunch (within 5h of start).</span></div>`;
+  let html=`<div class="toolbar"><button class="btn coral" id="optimize">⚡ Optimize schedule</button><button class="btn teal" id="autolunch">Auto-stagger breaks</button><span class="muted small">Drag a coloured bar to slide the shift; drag an empty cell to set new hours. Hatched = Lunch / Break / Off-phone.</span></div>`;
   html+=`<div style="overflow-x:auto"><div class="bgrid"><div class="bghead"></div>${HOURS.map(h=>`<div class="bghead">${fmtH(h)}</div>`).join('')}`;
   state.queues.forEach(q=>{
     const list=state.agents.map((a,i)=>({a,i})).filter(x=>x.a.skills[0]===q.id);
@@ -284,32 +321,38 @@ function renderTimeline(){
     html+=`<div class="bggroup" style="color:${q.color}"><span class="qdot" style="background:${q.color}"></span>${q.name} <span class="muted" style="font-weight:400">· ${list.length}</span></div>`;
     list.forEach(({a,i})=>{
       const sec=a.skills.length>1?` <span style="color:${qById(a.skills[1]).color}">+${qById(a.skills[1]).name}</span>`:'';
-      html+=`<div class="bglab"><span class="nm">${a.name}${sec}</span><span class="muted" style="font-size:11px">${shiftLabel(a)} · lunch ${fmtH(lunchBucket(a))}</span></div>`;
-      const lb=lunchBucket(a);
-      HOURS.forEach(h=>{ const work=worksHour(a,h); const lunch=work&&h===lb;
-        const st=work?blockStyle(a,h,q,lunch):'';
-        html+=`<div class="blk ${lunch?'lunch':''}" data-ai="${i}" data-h="${h}" style="${st}">${lunch?'Lunch':''}</div>`;
+      html+=`<div class="bglab"><span class="nm">${a.locked?'&#128274; ':''}${a.name}${sec}</span><span class="muted" style="font-size:11px">${shiftLabel(a)} · ${(a.lunchMin||30)}m lunch</span></div>`;
+      HOURS.forEach(h=>{ const info=blkInfo(a,h);
+        html+=`<div class="blk ${info.cls}" data-ai="${i}" data-h="${h}" style="${info.style}">${info.label}</div>`;
       });
     });
   });
   html+=`</div></div>`;
   el.innerHTML=html;
   el.querySelector('#optimize').onclick=optimize;
-  el.querySelector('#autolunch').onclick=autoLunches;
+  el.querySelector('#autolunch').onclick=autoBreaks;
   el.querySelectorAll('.blk').forEach(c=>{ const ai=+c.dataset.ai,h=+c.dataset.h;
-    c.addEventListener('mousedown',e=>{paint={ai,h0:h,h1:h};paintPreview();e.preventDefault();});
-    c.addEventListener('mouseenter',()=>{ if(paint&&paint.ai===ai){paint.h1=h;paintPreview();} });
+    c.addEventListener('mousedown',e=>{ const a=state.agents[ai];
+      if(worksHour(a,h)) drag={ai,mode:'slide',grab:h,oS:a.start,oE:a.end};
+      else { drag={ai,mode:'paint',h0:h,h1:h}; paintPreview(); }
+      e.preventDefault();
+    });
+    c.addEventListener('mouseenter',()=>{ if(!drag||drag.ai!==ai)return;
+      if(drag.mode==='paint'){ drag.h1=h; paintPreview(); }
+      else { const len=drag.oE-drag.oS; const ns=clamp(drag.oS+(h-drag.grab),DAY_START,LATEST_END-len); const a=state.agents[ai]; a.start=ns; a.end=ns+len; updateRowDOM(ai); }
+    });
   });
 }
 
-function autoLunches(){
-  state.agents.forEach((a,ai)=>{
-    const cand=lunchCandidates(a); if(cand.length<2) return;
-    let best=lunchBucket(a),bg=Infinity;
-    cand.forEach(h=>{ a.lunch=h; const g=computeAll(state).totDef; if(g<bg){bg=g;best=h;} });
-    a.lunch=best;
+function autoBreaks(){
+  state.agents.forEach(a=>{ if(a.locked) return;
+    const wb=workedBuckets(a); if(wb.length<3) return;
+    const interior=wb.slice(1,-1); const lc=lunchCandidates(a);
+    let best=a.lunch,bg=Infinity; lc.forEach(h=>{a.lunch=h;const g=computeAll(state).totDef;if(g<bg){bg=g;best=h;}}); a.lunch=best;
+    best=a.break;bg=Infinity; interior.filter(h=>h!==a.lunch).forEach(h=>{a.break=h;const g=computeAll(state).totDef;if(g<bg){bg=g;best=h;}}); a.break=best;
+    best=a.off;bg=Infinity; interior.filter(h=>h!==a.lunch&&h!==a.break).forEach(h=>{a.off=h;const g=computeAll(state).totDef;if(g<bg){bg=g;best=h;}}); a.off=best;
   });
-  refresh(); flash('Lunches staggered for best coverage (within 5h of each shift)');
+  refresh(); flash('Lunches & breaks staggered for best coverage');
 }
 
 function renderShifts(){
@@ -424,13 +467,13 @@ function renderPlan(){
     const short=curq<p.total;
     html+=`<tr><td class="lt" style="color:${q.color};font-weight:600">${q.name}</td><td>${p.daily}</td><td>${p.peak} @ ${fmtH(p.peakH)}</td><td class="lt" style="font-size:11px">${mix}</td><td><b>${p.total}</b></td><td style="${short?'color:var(--bad);font-weight:600':'color:var(--muted)'}">${curq}</td></tr>`;
   });
-  html+=`</tbody></table><div class="note">Each agent answers about <b>${(state.params.callsPerDay/7).toFixed(1)} calls/hour</b>. "Peak need" is the most agents that queue needs at once; "Recommended starts" is how many to start at each time so every hour is covered. Change focuses or volumes and this recomputes. <b>Apply this plan</b> rebuilds the roster to match (single-focus agents).</div>`;
+  html+=`</tbody></table><div class="note">Each agent answers about <b>${(state.params.callsPerDay/7).toFixed(1)} calls/hour</b>. "Recommended starts" is how many to start at each time so every hour is covered. <b>Apply this plan</b> rebuilds the roster to match (single-focus agents).</div>`;
   el.innerHTML=html;
   const ap=el.querySelector('#applyPlan'); if(ap) ap.onclick=()=>applyPlan(plan);
 }
 function applyPlan(plan){
   const agents=[]; let n=0;
-  state.queues.forEach(q=>{ PRESETS.forEach((pr,pi)=>{ for(let k=0;k<plan[q.id].counts[pi];k++){ n++; const a={id:'a'+n,name:'Agent '+n,skills:[q.id],start:pr.s,end:pr.e}; a.lunch=defaultLunch(a); agents.push(a); } }); });
+  state.queues.forEach(q=>{ PRESETS.forEach((pr,pi)=>{ for(let k=0;k<plan[q.id].counts[pi];k++){ n++; const a={id:'a'+n,name:'Agent '+n,skills:[q.id],start:pr.s,end:pr.e,lunchMin:30,locked:false}; placeBreaks(a); agents.push(a); } }); });
   state.agents=agents; refresh(); flash('Roster rebuilt to the recommended plan ('+agents.length+' agents)');
 }
 
@@ -444,15 +487,15 @@ function recommend(){
   state.agents.forEach((a,ai)=>{ state.queues.forEach(q=>{ if(a.skills.includes(q.id))return;
     const s=clone(state);s.agents[ai].skills.push(q.id);const imp=base-totDef(s);
     if(imp>0.5)nonHire.push({type:'cross',ai,q:q.id,imp,text:`Cross-train <b>${a.name}</b> in <b>${qById(q.id).name}</b>`,sub:`covers ${a.skills.map(x=>qById(x).name).join('/')} + ${qById(q.id).name}`});});});
-  state.agents.forEach((a,ai)=>{ PRESETS.forEach(pr=>{ if(pr.s===a.start)return;
-    const s=clone(state);s.agents[ai].start=pr.s;s.agents[ai].end=pr.e;s.agents[ai].lunch=defaultLunch(s.agents[ai]);const imp=base-totDef(s);
+  state.agents.forEach((a,ai)=>{ if(a.locked)return; PRESETS.forEach(pr=>{ if(pr.s===a.start)return;
+    const s=clone(state);s.agents[ai].start=pr.s;s.agents[ai].end=pr.e;placeBreaks(s.agents[ai]);const imp=base-totDef(s);
     if(imp>0.5)nonHire.push({type:'shift',ai,start:pr.s,end:pr.e,imp,text:`Move <b>${a.name}</b> to <b>${fmtHM(pr.s)}-${fmtHM(pr.e)}</b>`,sub:`from ${shiftLabel(a)}`});});});
-  state.agents.forEach((a,ai)=>{ const cur=lunchBucket(a); lunchCandidates(a).forEach(h=>{ if(h===cur)return;
+  state.agents.forEach((a,ai)=>{ if(a.locked)return; const cur=lunchBucket(a); lunchCandidates(a).forEach(h=>{ if(h===cur)return;
     const s=clone(state);s.agents[ai].lunch=h;const imp=base-totDef(s);
     if(imp>0.5)nonHire.push({type:'lunch',ai,lunch:h,imp,text:`Move <b>${a.name}</b>'s lunch to <b>${fmtH(h)}</b>`,sub:`from ${fmtH(cur)}`});});});
   const res=computeAll(state);
   if(res.worstQ) [PRESETS[0],PRESETS[4],PRESETS[8]].forEach(pr=>{ const s=clone(state);
-    const na={id:'new',name:'New hire',skills:[res.worstQ],start:pr.s,end:pr.e}; na.lunch=defaultLunch(na); s.agents.push(na);
+    const na={id:'new',name:'New hire',skills:[res.worstQ],start:pr.s,end:pr.e,lunchMin:30,locked:false}; placeBreaks(na); s.agents.push(na);
     const imp=base-totDef(s);
     if(imp>0.5)hire.push({type:'add',q:res.worstQ,start:pr.s,end:pr.e,imp,text:`Hire 1 <b>${qById(res.worstQ).name}</b> agent on <b>${fmtHM(pr.s)}-${fmtHM(pr.e)}</b>`,sub:'new headcount'});});
   return {base,nonHire:dedupe(nonHire).slice(0,8),hire:dedupe(hire).slice(0,3)};
@@ -480,9 +523,9 @@ function renderRecs(){
     const rg=el.querySelector('#regen'); if(rg) rg.onclick=renderRecs;
     el.querySelectorAll('[data-ap]').forEach(b=>b.onclick=()=>{ const c=(b.dataset.grp==='n'?nonHire:hire)[+b.dataset.ap];
       if(c.type==='cross')state.agents[c.ai].skills.push(c.q);
-      else if(c.type==='shift'){const a=state.agents[c.ai];a.start=c.start;a.end=c.end;a.lunch=defaultLunch(a);}
+      else if(c.type==='shift'){const a=state.agents[c.ai];a.start=c.start;a.end=c.end;placeBreaks(a);}
       else if(c.type==='lunch')state.agents[c.ai].lunch=c.lunch;
-      else {const a={id:'a'+Date.now(),name:'Agent '+(state.agents.length+1),skills:[c.q],start:c.start,end:c.end};a.lunch=defaultLunch(a);state.agents.push(a);}
+      else {const a={id:'a'+Date.now(),name:'Agent '+(state.agents.length+1),skills:[c.q],start:c.start,end:c.end,lunchMin:30,locked:false};placeBreaks(a);state.agents.push(a);}
       refresh();renderRecs(); });
   },20);
 }
@@ -492,18 +535,57 @@ function optimize(){
   while(improved&&guard<400){ improved=false;guard++;
     const base=totDef(state);
     let best=null,bestImp=0.5;
-    state.agents.forEach((a,ai)=>{ PRESETS.forEach(pr=>{ if(pr.s===a.start)return;
-      const s=clone(state);s.agents[ai].start=pr.s;s.agents[ai].end=pr.e;s.agents[ai].lunch=defaultLunch(s.agents[ai]);const imp=base-totDef(s);
+    state.agents.forEach((a,ai)=>{ if(a.locked)return; PRESETS.forEach(pr=>{ if(pr.s===a.start)return;
+      const s=clone(state);s.agents[ai].start=pr.s;s.agents[ai].end=pr.e;placeBreaks(s.agents[ai]);const imp=base-totDef(s);
       if(imp>bestImp){bestImp=imp;best={ai,pr};} }); });
-    if(best){ const a=state.agents[best.ai]; a.start=best.pr.s; a.end=best.pr.e; a.lunch=defaultLunch(a); improved=true; }
+    if(best){ const a=state.agents[best.ai]; a.start=best.pr.s; a.end=best.pr.e; placeBreaks(a); improved=true; }
   }
-  state.agents.forEach(a=>{ const cand=lunchCandidates(a); if(cand.length<2)return; let bb=lunchBucket(a),bg=Infinity; cand.forEach(h=>{a.lunch=h;const g=totDef(state);if(g<bg){bg=g;bb=h;}}); a.lunch=bb; });
+  state.agents.forEach(a=>{ if(a.locked)return; const wb=workedBuckets(a); if(wb.length<3)return; const interior=wb.slice(1,-1); const lc=lunchCandidates(a);
+    let bb=a.lunch,bg=Infinity; lc.forEach(h=>{a.lunch=h;const g=totDef(state);if(g<bg){bg=g;bb=h;}}); a.lunch=bb;
+    bb=a.break;bg=Infinity; interior.filter(h=>h!==a.lunch).forEach(h=>{a.break=h;const g=totDef(state);if(g<bg){bg=g;bb=h;}}); a.break=bb;
+    bb=a.off;bg=Infinity; interior.filter(h=>h!==a.lunch&&h!==a.break).forEach(h=>{a.off=h;const g=totDef(state);if(g<bg){bg=g;bb=h;}}); a.off=bb; });
   const after=computeAll(state);
   refresh();
   if(after.totDef>5){
     const need=Math.ceil(after.totNeed/state.params.callsPerDay)-state.agents.length;
-    flash(need>0?('Schedule + lunches optimized - still -'+Math.round(after.totDef)+'/day. See Plan tab: more agents needed in short queues'):'Schedule + lunches optimized');
+    flash(need>0?('Schedule optimized - still -'+Math.round(after.totDef)+'/day. See Plan tab: more agents needed in short queues'):'Schedule optimized');
   } else flash('Optimized - fully covered');
+}
+
+function getScenarios(){ try{return JSON.parse(localStorage.getItem(SKEY)||'{}');}catch(e){return {};} }
+function setScenarios(o){ try{localStorage.setItem(SKEY,JSON.stringify(o));}catch(e){} }
+function saveScenario(name){ const all=getScenarios(); all[name]=JSON.stringify(state); setScenarios(all); }
+function loadScenario(name){ const all=getScenarios(); if(all[name]){ state=JSON.parse(all[name]); state.agents.forEach(a=>{if(a.lunchMin==null)a.lunchMin=30; if(a.break==null)placeBreaks(a);}); setTab('timeline'); flash('Loaded '+name); } }
+function delScenario(name){ const all=getScenarios(); delete all[name]; setScenarios(all); renderSave(); }
+function exportRosterCSV(){
+  const rows=['Name,Focus,Shift,Lunch,Break,Off-phone,Lunch length,Locked'];
+  state.agents.slice().sort((a,b)=>a.start-b.start||a.name.localeCompare(b.name)).forEach(a=>{
+    rows.push([a.name,a.skills.map(s=>qById(s).name).join('/'),shiftLabel(a),fmtH(lunchBucket(a)),fmtH(a.break),fmtH(a.off),(a.lunchMin||30)+'min',a.locked?'yes':''].map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(','));
+  });
+  const u=document.createElement('a');u.href=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'}));u.download='accuro-schedule.csv';u.click();
+}
+function printSchedule(){
+  let t=`<h2 style="font-family:sans-serif">Accuro CS Schedule</h2><table border="1" cellpadding="6" style="border-collapse:collapse;font-family:sans-serif;font-size:13px"><tr style="background:#eee"><th>Name</th><th>Focus</th><th>Shift</th><th>Lunch</th><th>Break</th><th>Off-phone</th></tr>`;
+  state.agents.slice().sort((a,b)=>a.start-b.start||a.name.localeCompare(b.name)).forEach(a=>{ t+=`<tr><td>${a.name}</td><td>${a.skills.map(s=>qById(s).name).join('/')}</td><td>${shiftLabel(a)}</td><td>${fmtH(lunchBucket(a))}</td><td>${fmtH(a.break)}</td><td>${fmtH(a.off)}</td></tr>`; });
+  t+=`</table>`;
+  const w=window.open('','_blank'); if(!w){flash('Allow pop-ups to print');return;} w.document.write('<html><head><title>Accuro CS Schedule</title></head><body>'+t+'</body></html>'); w.document.close(); w.focus(); setTimeout(()=>w.print(),200);
+}
+function renderSave(){
+  const el=document.getElementById('tab-save');
+  const all=getScenarios();
+  let html=`<div class="toolbar"><input type="text" id="scName" placeholder="Scenario name (Current, Optimized, Post-hire...)" style="width:300px"><button class="btn teal" id="scSave">Save current</button>
+    <button class="btn" id="expCsv">Download roster CSV</button><button class="btn" id="expPrint">Print schedule</button></div>`;
+  const rows=[['Current ▸ live',state]].concat(Object.keys(all).map(n=>{let st;try{st=JSON.parse(all[n]);}catch(e){st=null;}return [n,st];}).filter(x=>x[1]));
+  html+=`<h3 style="font-size:14px;margin:4px 0 8px">Compare scenarios</h3><table class="grid-dem"><thead><tr><th class="lt">Scenario</th><th>Agents</th><th>Offered</th><th>Handled</th><th>Gap</th><th>Coverage</th><th></th></tr></thead><tbody>`;
+  rows.forEach(([n,st])=>{ const r=computeAll(st); const cov=Math.round(r.coverage*100);
+    html+=`<tr><td class="lt" style="font-weight:600">${n}</td><td>${st.agents.length}</td><td>${Math.round(r.totNeed)}</td><td>${Math.round(r.totHandled)}</td><td style="color:${r.totDef>0?'var(--bad)':'var(--good)'}">${r.totDef>0?'-':''}${Math.round(r.totDef)}</td><td style="color:${cov>=90?'var(--good)':cov>=70?'var(--warn)':'var(--bad)'}">${cov}%</td><td>${n.startsWith('Current')?'':`<button class="btn small" data-load="${n}">Load</button> <button class="btn small" data-delsc="${n}" style="color:var(--bad)">Del</button>`}</td></tr>`; });
+  html+=`</tbody></table><div class="note">Scenarios save in this browser. Save the current setup under a name, change things, save another, and compare side by side. <b>Load</b> replaces the current setup. Export gives a clean roster (names, shift, lunch, break, off-phone) to hand to the team.</div>`;
+  el.innerHTML=html;
+  el.querySelector('#scSave').onclick=()=>{const n=el.querySelector('#scName').value.trim(); if(!n){flash('Type a name first');return;} saveScenario(n); renderSave(); flash('Saved '+n);};
+  el.querySelector('#expCsv').onclick=exportRosterCSV;
+  el.querySelector('#expPrint').onclick=printSchedule;
+  el.querySelectorAll('[data-load]').forEach(b=>b.onclick=()=>loadScenario(b.dataset.load));
+  el.querySelectorAll('[data-delsc]').forEach(b=>b.onclick=()=>delScenario(b.dataset.delsc));
 }
 
 function setDailyVolume(qi,nt){ const q=state.queues[qi]; const arr=state.demand[q.id]; const old=arr.reduce((a,b)=>a+b,0);
@@ -519,11 +601,8 @@ function renderDemand(){
   html+=`</div></div>
     <h3 style="font-size:14px;margin:18px 0 8px">Capacity assumptions <span class="muted small">(how many calls we HANDLE)</span></h3><div class="toolbar">
     <div class="field"><label>Calls / agent / day</label><input type="number" id="p_cpd" value="${P.callsPerDay}"></div>
-    <div class="field"><label>Penalty / extra focus</label><input type="number" step="0.05" id="p_sp" value="${P.skillPenalty}"></div>
-    <div class="field"><label>Lunch (min)</label><input type="number" id="p_l" value="${P.lunchMin}"></div>
-    <div class="field"><label>Break (min)</label><input type="number" id="p_b" value="${P.breakMin}"></div>
-    <div class="field"><label>Off-phone (min)</label><input type="number" id="p_o" value="${P.offPhoneMin}"></div></div>
-    <div class="note">Lunch is taken within 5h of shift start. <b>Offered</b> = calls in, <b>Handled</b> = answered, <b>Gap</b> = offered - handled, <b>Idle</b> = capacity with no call to take.</div>
+    <div class="field"><label>Penalty / extra focus</label><input type="number" step="0.05" id="p_sp" value="${P.skillPenalty}"></div></div>
+    <div class="note">Each agent handles <b>${P.callsPerDay} calls/day</b> at one focus; every extra focus multiplies capacity by (1 - ${P.skillPenalty}). Lunch (30 or 60 min, per agent), a 30-min break and a 1-hour off-phone block are placed within each shift and shown on the Timeline. Lunch is within 5h of shift start. <b>Offered</b> = calls in, <b>Handled</b> = answered, <b>Gap</b> = offered - handled, <b>Idle</b> = capacity with no call to take.</div>
     <h3 style="font-size:14px;margin:18px 0 8px">Call volume by hour <span class="muted small">(fine-tune the shape; or edit the bold /day to rescale)</span></h3>
     <div class="toolbar"><button class="btn" id="csvUp2">Upload CSV</button><button class="btn" id="csvDown2">Download CSV</button></div>
     <div style="overflow-x:auto"><table class="grid-dem"><thead><tr><th>Queue</th>${HOURS.map(h=>`<th>${fmtH(h)}</th>`).join('')}<th>/day</th></tr></thead><tbody>`;
@@ -535,7 +614,7 @@ function renderDemand(){
   el.innerHTML=html;
   el.querySelectorAll('[data-vol]').forEach(inp=>inp.onchange=()=>{ setDailyVolume(+inp.dataset.vol, +inp.value||0); refresh(); });
   const bind=(id,k)=>{const e=el.querySelector(id);e.onchange=()=>{P[k]=+e.value||0;refresh();};};
-  bind('#p_cpd','callsPerDay');bind('#p_sp','skillPenalty');bind('#p_l','lunchMin');bind('#p_b','breakMin');bind('#p_o','offPhoneMin');
+  bind('#p_cpd','callsPerDay');bind('#p_sp','skillPenalty');
   el.querySelectorAll('[data-dq]').forEach(inp=>inp.onchange=()=>{state.demand[state.queues[+inp.dataset.dq].id][+inp.dataset.dh]=+inp.value||0;refresh();});
   el.querySelectorAll('[data-dt]').forEach(inp=>inp.onchange=()=>{ setDailyVolume(+inp.dataset.dt, +inp.value||0); refresh(); });
   el.querySelector('#csvDown2').onclick=downloadCSV; el.querySelector('#csvUp2').onclick=()=>document.getElementById('csvFile').click();
@@ -557,14 +636,15 @@ function refresh(){ const res=C(); renderKPIs(res); renderSidebar();
   if(active==='charts')renderCharts(res);
   if(active==='heat')renderHeat(res);
   if(active==='plan')renderPlan();
+  if(active==='save')renderSave();
   if(active==='dem')renderDemand();
 }
 function setTab(t){ active=t; document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));
-  ['timeline','shifts','charts','heat','plan','rec','dem'].forEach(x=>document.getElementById('tab-'+x).classList.toggle('hide',x!==t));
+  ['timeline','shifts','charts','heat','plan','rec','save','dem'].forEach(x=>document.getElementById('tab-'+x).classList.toggle('hide',x!==t));
   if(t==='rec')renderRecs(); else refresh(); }
 
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
-document.getElementById('addAgent').onclick=()=>{const a={id:'a'+Date.now(),name:'Agent '+(state.agents.length+1),skills:[state.queues[0].id],start:8,end:16.5};a.lunch=defaultLunch(a);state.agents.unshift(a);refresh();};
+document.getElementById('addAgent').onclick=()=>{const a={id:'a'+Date.now(),name:'Agent '+(state.agents.length+1),skills:[state.queues[0].id],start:8,end:16.5,lunchMin:30,locked:false};placeBreaks(a);state.agents.unshift(a);refresh();};
 document.getElementById('csvUp').onclick=()=>document.getElementById('csvFile').click();
 document.getElementById('csvDown').onclick=e=>{e.stopPropagation();downloadCSV();};
 document.getElementById('csvFile').onchange=e=>{const f=e.target.files[0];if(f){const r=new FileReader();r.onload=()=>importCSV(r.result);r.readAsText(f);}};
