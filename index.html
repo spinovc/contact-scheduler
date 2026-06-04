@@ -186,8 +186,8 @@ function agentCapacity(agent,p){
   const eff=p.callsPerDay*skillFactor(agent,p);
   const w={}; let sum=0;
   wb.forEach(h=>{ let wt=(h===lb)?0:1;
-    if(h===Math.floor(agent.start)&&agent.start%1!==0) wt*=0.5;
-    if(h+1>agent.end) wt*=0.5; w[h]=wt; sum+=wt; });
+    if(h===Math.floor(agent.start)&&agent.start%1!==0) wt*=((h+1)-agent.start);
+    if(agent.end>h&&agent.end<h+1) wt*=(agent.end-h); w[h]=wt; sum+=wt; });
   const cap={}; wb.forEach(h=>{ cap[h]= sum>0 ? eff*w[h]/sum : 0; });
   return cap;
 }
@@ -265,9 +265,18 @@ function paintPreview(){ if(!paint)return; const lo=Math.min(paint.h0,paint.h1),
   document.querySelectorAll('.blk[data-ai="'+paint.ai+'"]').forEach(c=>{ const h=+c.dataset.h; c.classList.toggle('paint', h>=lo&&h<=hi); }); }
 document.addEventListener('mouseup',()=>{ if(paint){ const lo=Math.min(paint.h0,paint.h1),hi=Math.max(paint.h0,paint.h1);
   const a=state.agents[paint.ai]; a.start=lo; a.end=hi+1; a.lunch=defaultLunch(a); paint=null; refresh(); } });
+function blockStyle(a,h,q,lunch){
+  if(lunch) return `background:${q.color};border-color:transparent;`;
+  let fill=1, side='full';
+  if(h===Math.floor(a.start) && a.start%1!==0){ fill=(h+1)-a.start; side='right'; }
+  else if(a.end>h && a.end<h+1){ fill=a.end-h; side='left'; }
+  if(side==='full') return `background:${q.color};border-color:transparent;`;
+  if(side==='right'){ const p=Math.round((1-fill)*100); return `background:linear-gradient(to right,var(--panel2) ${p}%,${q.color} ${p}%);`; }
+  const p=Math.round(fill*100); return `background:linear-gradient(to right,${q.color} ${p}%,var(--panel2) ${p}%);`;
+}
 function renderTimeline(){
   const el=document.getElementById('tab-timeline');
-  let html=`<div class="toolbar"><button class="btn coral" id="optimize">⚡ Optimize schedule</button><button class="btn teal" id="autolunch">Auto-stagger lunches</button><span class="muted small">Click-drag a row to set hours. "Lunch" block = 30-min lunch (within 5h of shift start).</span></div>`;
+  let html=`<div class="toolbar"><button class="btn coral" id="optimize">⚡ Optimize schedule</button><button class="btn teal" id="autolunch">Auto-stagger lunches</button><span class="muted small">Click-drag a row to set hours. Half blocks = 30-min starts/ends. "Lunch" = 30-min lunch (within 5h of start).</span></div>`;
   html+=`<div style="overflow-x:auto"><div class="bgrid"><div class="bghead"></div>${HOURS.map(h=>`<div class="bghead">${fmtH(h)}</div>`).join('')}`;
   state.queues.forEach(q=>{
     const list=state.agents.map((a,i)=>({a,i})).filter(x=>x.a.skills[0]===q.id);
@@ -278,7 +287,7 @@ function renderTimeline(){
       html+=`<div class="bglab"><span class="nm">${a.name}${sec}</span><span class="muted" style="font-size:11px">${shiftLabel(a)} · lunch ${fmtH(lunchBucket(a))}</span></div>`;
       const lb=lunchBucket(a);
       HOURS.forEach(h=>{ const work=worksHour(a,h); const lunch=work&&h===lb;
-        const st=work?`background:${q.color};border-color:transparent;`:'';
+        const st=work?blockStyle(a,h,q,lunch):'';
         html+=`<div class="blk ${lunch?'lunch':''}" data-ai="${i}" data-h="${h}" style="${st}">${lunch?'Lunch':''}</div>`;
       });
     });
